@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="popup.css">
+    <title>Document</title>
+</head>
+<body>
+    <button class="start-recording">Start</button>
+    <button class="stop-recording">Stop</button>
+    <div class="recorded-video-wrap ">
+        <h2 class="text-xl text-gray-500 uppercase font-light mb-4">
+            Recorded video
+        </h2>
+
+        <video src="" class="recorded-video bg-black w-full h-auto mb-8"></video>
+        <div class="flex flex-wrap -mx-4">
+            <a class="download-video text-center mx-4 flex-1 bg-gradient-to-br from-purple-500 to to-pink-500 p-4 uppercase text-lg font-bold transition-all duration-300 hover:opacity-90 disabled:opacity-50" disabled>
+                Download
+            </a>
+        </div>
+</body>
+<script src="popup.js"></script>
+<script src="content.js"></script>
+<script src="https://www.WebRTC-Experiment.com/RecordRTC.js"></script>
+</html>
