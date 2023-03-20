@@ -17,24 +17,28 @@ let isRecordingVideo = false;
 let videoDisplay = document.createElement("video");
 videoDisplay.classList.add("video-feedback");
 
-var stopButton = document.querySelector(".Gt6sbf");
+// var stopButton = document.querySelector(".Gt6sbf");
 
-stopButton.addEventListener("click", stopRecording);
+// stopButton.addEventListener("click", stopRecording);
 
 let newButton = document.createElement("button");
 newButton.id = "newButton";
 newButton.className = "Jyj1Td CkXZgc";
 newButton.type = "button";
-newButton.innerHTML = "Record";
+newButton.innerHTML = "Rec";
 newButton.style.border = "none";
 newButton.style.backgroundColor = "#ea4335";
 newButton.style.color = "white";
 newButton.style.height = "2.6rem";
 newButton.style.width = "4.2rem";
-newButton.style.borderRadius = "30px";
-if(isRecordingVideo===true){
-  newButton.disabled=true
+newButton.style.borderRadius = "50%";
+newButton.style.cursor = "pointer";
+
+
+if (isRecordingVideo === true) {
+  newButton.disabled = true;
 }
+
 function insertButton() {
   try {
     ui_buttons = document.getElementsByClassName("VfPpkd-kBDsod NtU4hc");
@@ -48,8 +52,8 @@ function insertButton() {
 
 setInterval(insertButton, 1000);
 
-//   startButton = document.querySelector(".start-recording");
-//   stopButton = document.querySelector(".stop-recording");
+// startButton = document.querySelector(".start-recording");
+// stopButton = document.querySelector(".stop-recording");
 
 async function setupStream() {
   try {
@@ -87,7 +91,13 @@ function setupVideoFeedback() {
 }
 
 async function startRecording() {
-  newButton.disabled= true
+  isRecordingVideo = true;
+  if (isRecordingVideo === true) {
+    console.log("recording will not work again")
+    newButton.disabled = true;
+  }
+
+  
   await setupStream();
   console.log("Recorder function is running");
   if (stream && audio) {
@@ -115,7 +125,7 @@ console.log(newButton, "this is new Button");
 newButton.addEventListener("click", startRecording);
 
 function handleDataAvailable(e) {
-  newButton.disabled=true
+  newButton.disabled = true;
   console.log(chunks, "this is chunks");
   chunks.push(e.data);
 }
@@ -145,8 +155,6 @@ function handleStop(e) {
   console.log("Recording stopped");
   isRecordingVideo = false;
 }
-
-
 
 // window.addEventListener('load', () => {
 
