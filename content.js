@@ -80,6 +80,7 @@ window.addEventListener("load", () => {
 
   function insertRecButton() {
     try {
+      // console.log(chrome.runtime.getURL('popup.html'))
       ui_buttons = document.getElementsByClassName("VfPpkd-kBDsod NtU4hc");
 
       document.getElementsByClassName("jsNRx")[0].appendChild(recButton);
@@ -92,10 +93,9 @@ window.addEventListener("load", () => {
     insertRecButton();
   }, 1000);
 
-// if(document.getElementsByClassName("VfPpkd-kBDsod NtU4hc")){
-//   setTimeout(insertRecButton(),1000)
-// }
-
+  // if(document.getElementsByClassName("VfPpkd-kBDsod NtU4hc")){
+  //   setTimeout(insertRecButton(),1000)
+  // }
 
   function insertButton() {
     try {
@@ -318,21 +318,19 @@ window.addEventListener("load", () => {
   function toTimeFormat(time) {
     const SECONDS_IN_HOUR = 3600;
     const SECONDS_IN_MINUTE = 60;
-  
+
     let hours = Math.floor(time / SECONDS_IN_HOUR);
     let minutes = Math.floor((time % SECONDS_IN_HOUR) / SECONDS_IN_MINUTE);
     let seconds = time % SECONDS_IN_MINUTE;
-  
+
     hours = hours.toString().padStart(2, "0");
     minutes = minutes.toString().padStart(2, "0");
     seconds = seconds.toString().padStart(2, "0");
-  
+
     return hours === "00"
       ? `${minutes}:${seconds}`
       : `${hours}:${minutes}:${seconds}`;
   }
-
-  
 
   //Recorder functions
 
@@ -352,9 +350,9 @@ window.addEventListener("load", () => {
     }
   }
 
-
   async function stopRecording() {
     const blob = new Blob(chunks, { type: "video/mp4" });
+
     // console.log(JSON.parse(JSON.stringify(chunks)), "string chunks");
 
     console.log(blob, "the orignal blob recieved");
@@ -379,7 +377,7 @@ window.addEventListener("load", () => {
     blobToBase64(blob)
       .then((base64Strings) => {
         base64Video = base64Strings;
-        console.log(base64Strings, "converting blob to base 64")
+        console.log(base64Strings, "converting blob to base 64");
         // const url = `https://shivansh3218-fantastic-spoon-rj9qvj64pjfp77v-5500.preview.app.github.dev/index.html?base64=${base64Video}`; // endpoint where this data will go
         // console.log(url, "url of the next page");
 
@@ -395,6 +393,15 @@ window.addEventListener("load", () => {
     console.log("recording stopped stopRecording function ");
     recorder.stop();
     recorder.onstop = handleStop;
+
+    let url = chrome.runtime.getURL("preview.html");
+
+    // console.log(chrome.tabs, "Chrome tabs are available");
+
+    // // location.href = await url
+     console.log(url,"current location url")
+    // //  await chrome.tabs.update({url:url});
+    //  window.open(url, "_self")
   }
 
   function setupVideoFeedback() {
@@ -438,5 +445,3 @@ window.addEventListener("load", () => {
     console.log("Recording stopped handleStop function");
   }
 });
-
-

@@ -1,31 +1,33 @@
 {
-    "name": "Meraki Extension",
-    "version": "1.0",
-    "manifest_version": 3,
-    "description": "Screen and Audio Recorder ",
-    "icons": {
-      "128": "./images/meraki128.png"
-    },
-    "permissions": [
-      "storage",
-      "activeTab",
-      "scripting",
-      "tabCapture",
-      "downloads"
-    ],
-    "content_scripts": [
-       {
+  "name": "Meraki Extension",
+  "version": "1.0",
+  "manifest_version": 3,
+  "description": "Screen and Audio Recorder ",
+  "icons": {
+    "128": "./images/meraki128.png"
+  },
+  "permissions": [
+    "webRequest",
+    "tabs",
+    "storage",
+    "activeTab",
+    "scripting",
+    "tabCapture",
+    "downloads"
+  ],
+  "content_scripts": [
+    {
       "matches": ["*://meet.google.com/*-*-*"],
       "js": ["content.js"]
     }
-      ],
-    "action": {
-      "default_popup": "popup.html",
-      "default_icon": "./images/meraki.png",
-      "icons":{
-        "16": "./images/meraki16.png",
-        "48": "./images/meraki.png",
-        "128": "./images/meraki.png"
-      }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "./images/meraki.png",
+    "icons": {
+      "16": "./images/meraki16.png",
+      "48": "./images/meraki.png",
+      "128": "./images/meraki.png"
     }
   }
+}
