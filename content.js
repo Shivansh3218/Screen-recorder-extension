@@ -7,7 +7,6 @@ window.addEventListener("load", () => {
   let recorder = null;
   let isRecordingVideo = false;
 
-
   //attendance tracker variables
 
   let studentDetails = new Map();
@@ -63,6 +62,45 @@ window.addEventListener("load", () => {
   newButton.style.width = "4.2rem";
   newButton.style.borderRadius = "30px";
 
+
+
+
+
+
+
+// Define the callback function to execute when the Google API client library is loaded
+function init() {
+  // Your code that uses the Google API client library here
+}
+
+// Create a script tag and set its source to the Google API client library
+
+
+// var script = document.createElement('script');
+// script.src = 'https://apis.google.com/js/api.js';
+
+// // Set the callback function to execute when the script has finished loading
+// script.onload = function() {
+//   gapi.load('client', init);
+// };
+
+// // Add the script tag to the document
+// document.head.appendChild(script);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
   recButton.addEventListener("click", () => {
     if (recButton.innerHTML == "Rec") {
       isRecordingVideo = true;
@@ -80,11 +118,13 @@ window.addEventListener("load", () => {
   });
 
   function insertRecButton() {
+    // console.log(document.getElementsByClassName("VfPpkd-kBDsod NtU4hc").length>0)
     try {
       // console.log(chrome.runtime.getURL('popup.html'))
-      ui_buttons = document.getElementsByClassName("VfPpkd-kBDsod NtU4hc");
-
-      document.getElementsByClassName("jsNRx")[0].appendChild(recButton);
+      if (document.getElementsByClassName("VfPpkd-kBDsod NtU4hc").length>0) {
+        ui_buttons = document.getElementsByClassName("VfPpkd-kBDsod NtU4hc");
+        document.getElementsByClassName("jsNRx")[0].appendChild(recButton);
+      }
     } catch (error) {
       console.log(error);
     }
@@ -208,7 +248,7 @@ window.addEventListener("load", () => {
         .then((response) => response.json())
         .then((string) => {
           console.log(`Title of our response :  ${string.title}`);
-          window.open("http://192.168.101.4:5500/index.html");
+          // window.open("http://192.168.101.4:5500/index.html");
           // runtime.openOptionsPage()
         })
         .catch((error) => {
@@ -352,98 +392,80 @@ window.addEventListener("load", () => {
   }
 
   async function stopRecording() {
- 
     //creating a database named as myDatabaseBlob
-    const dbPromise = window.indexedDB.open('myDatabaseBlob', 1);
-    
+    const dbPromise = window.indexedDB.open("myDatabaseBlob", 1);
+
     dbPromise.onsuccess = (event) => {
-      console.log("Going inside the dbpromise function --------------------------");
+      console.log(
+        "Going inside the dbpromise function --------------------------"
+      );
 
       const db = event.target.result;
-    
-      // Create a transaction to access the object store
-      const transaction = db.transaction('myObjectStore', 'readwrite');
-      const objectStore = transaction.objectStore('myObjectStore');
-    
 
-    // blob file to be uploaded
-    const blob = new Blob(chunks, { type: "video/mp4" });
-    
+      // Create a transaction to access the object store
+      const transaction = db.transaction("myObjectStore", "readwrite");
+      const objectStore = transaction.objectStore("myObjectStore");
+
+      // blob file to be uploaded
+      const blob = new Blob(chunks, { type: "video/mp4" });
+
       // Add the Blob to the object store
       const request = objectStore.add(blob);
-    
+
       request.onerror = (e) => {
-        console.error('Error adding Blob to object store:', e.target.error);
+        console.error("Error adding Blob to object store:", e.target.error);
       };
-    
+
       request.onsuccess = () => {
-        console.log('Blob added to object store:', request.result);
+        console.log("Blob added to object store:", request.result);
       };
     };
-    
 
     dbPromise.onupgradeneeded = (e) => {
       const db = e.target.result;
-    
+
       // Create a new object store in the database
-      const objectStore = db.createObjectStore('myObjectStore', { keyPath: 'id', autoIncrement: true });
+      const objectStore = db.createObjectStore("myObjectStore", {
+        keyPath: "id",
+        autoIncrement: true,
+      });
     };
 
-
-    // console.log(JSON.parse(JSON.stringify(chunks)), "string chunks");
-
-    // console.log(blob, "the orignal blob recieved");
-    // let base64Video = [];
-
-    // // Function to convert a single Blob to Base64
-    // const blobToBase64 = (blob) => {
-    //   return new Promise((resolve, reject) => {
-    //     const reader = new FileReader();
-    //     reader.readAsDataURL(blob);
-    //     reader.onloadend = () => {
-    //       const base64String = reader.result
-    //         .toString()
-    //         .replace(/^data:(.*,)?/, "");
-    //       resolve(base64String);
-    //     };
-    //     reader.onerror = (error) => reject(error);
-    //   });
-    // };
-
-    // // Use Promise.all() to convert the array of Blobs to an array of Base64 strings
-    // blobToBase64(blob)
-    //   .then((base64Strings) => {
-    //     base64Video = base64Strings;
-    //     console.log(base64Strings, "converting blob to base 64");
-    //     // const url = `https://shivansh3218-fantastic-spoon-rj9qvj64pjfp77v-5500.preview.app.github.dev/index.html?base64=${base64Video}`; // endpoint where this data will go
-    //     // console.log(url, "url of the next page");
-
-    //     // console.log(base64Video, "base64 video outside then");
-    //     // window.open(url);
-    //   })
-    //   .catch((error) => {
-    //     console.error(error);
-    //   });
-
-    // recButton.href = URL.createObjectURL(blob);
-    // recButton.download = "video.mp4";
-
-    console.log("recording stopped stopRecording function ");
     recorder.stop();
     recorder.onstop = handleStop;
 
-    // let url = chrome.runtime.getURL("preview.html");
+
+
+
+
+    // gapi.load('client', function() {
+    //   // Initialize the client with the API key and desired API discovery document
+    //   gapi.client.init({
+    //     apiKey: 'YOUR_API_KEY',
+    //     discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest']
+    //   }).then(function() {
+    //     // The client is now ready to use
+    //     console.log('YouTube Data API client loaded');
+    //   }, function(error) {
+    //     console.error('Error loading YouTube Data API client', error);
+    //   });
+    // });
+
+
+
+
+    let url = chrome.runtime.getURL("preview.html");
 
     // console.log(chrome.tabs, "Chrome tabs are available");
 
     // // location.href = await url
     //  console.log(url,"current location url")
     // //  await chrome.tabs.update({url:url});
-    //  window.open(url, "_self")
+     window.open(url)
 
     // window.location.href = "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html";
 
-
+    // chrome.tabs.create({ url: "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html" })
 
   }
 

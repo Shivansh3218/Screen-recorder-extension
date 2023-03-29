@@ -6,6 +6,9 @@
   "icons": {
     "128": "./images/meraki128.png"
   },
+  "background.service_worker": {
+    "scripts": ["background.js"]
+  },
   "permissions": [
     "webRequest",
     "tabs",
