@@ -7,6 +7,7 @@ window.addEventListener("load", () => {
   let recorder = null;
   let isRecordingVideo = false;
 
+
   //attendance tracker variables
 
   let studentDetails = new Map();
@@ -351,57 +352,99 @@ window.addEventListener("load", () => {
   }
 
   async function stopRecording() {
+ 
+    //creating a database named as myDatabaseBlob
+    const dbPromise = window.indexedDB.open('myDatabaseBlob', 1);
+    
+    dbPromise.onsuccess = (event) => {
+      console.log("Going inside the dbpromise function --------------------------");
+
+      const db = event.target.result;
+    
+      // Create a transaction to access the object store
+      const transaction = db.transaction('myObjectStore', 'readwrite');
+      const objectStore = transaction.objectStore('myObjectStore');
+    
+
+    // blob file to be uploaded
     const blob = new Blob(chunks, { type: "video/mp4" });
+    
+      // Add the Blob to the object store
+      const request = objectStore.add(blob);
+    
+      request.onerror = (e) => {
+        console.error('Error adding Blob to object store:', e.target.error);
+      };
+    
+      request.onsuccess = () => {
+        console.log('Blob added to object store:', request.result);
+      };
+    };
+    
+
+    dbPromise.onupgradeneeded = (e) => {
+      const db = e.target.result;
+    
+      // Create a new object store in the database
+      const objectStore = db.createObjectStore('myObjectStore', { keyPath: 'id', autoIncrement: true });
+    };
+
 
     // console.log(JSON.parse(JSON.stringify(chunks)), "string chunks");
 
-    console.log(blob, "the orignal blob recieved");
-    let base64Video = [];
+    // console.log(blob, "the orignal blob recieved");
+    // let base64Video = [];
 
-    // Function to convert a single Blob to Base64
-    const blobToBase64 = (blob) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          const base64String = reader.result
-            .toString()
-            .replace(/^data:(.*,)?/, "");
-          resolve(base64String);
-        };
-        reader.onerror = (error) => reject(error);
-      });
-    };
+    // // Function to convert a single Blob to Base64
+    // const blobToBase64 = (blob) => {
+    //   return new Promise((resolve, reject) => {
+    //     const reader = new FileReader();
+    //     reader.readAsDataURL(blob);
+    //     reader.onloadend = () => {
+    //       const base64String = reader.result
+    //         .toString()
+    //         .replace(/^data:(.*,)?/, "");
+    //       resolve(base64String);
+    //     };
+    //     reader.onerror = (error) => reject(error);
+    //   });
+    // };
 
-    // Use Promise.all() to convert the array of Blobs to an array of Base64 strings
-    blobToBase64(blob)
-      .then((base64Strings) => {
-        base64Video = base64Strings;
-        console.log(base64Strings, "converting blob to base 64");
-        // const url = `https://shivansh3218-fantastic-spoon-rj9qvj64pjfp77v-5500.preview.app.github.dev/index.html?base64=${base64Video}`; // endpoint where this data will go
-        // console.log(url, "url of the next page");
+    // // Use Promise.all() to convert the array of Blobs to an array of Base64 strings
+    // blobToBase64(blob)
+    //   .then((base64Strings) => {
+    //     base64Video = base64Strings;
+    //     console.log(base64Strings, "converting blob to base 64");
+    //     // const url = `https://shivansh3218-fantastic-spoon-rj9qvj64pjfp77v-5500.preview.app.github.dev/index.html?base64=${base64Video}`; // endpoint where this data will go
+    //     // console.log(url, "url of the next page");
 
-        // console.log(base64Video, "base64 video outside then");
-        // window.open(url);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    //     // console.log(base64Video, "base64 video outside then");
+    //     // window.open(url);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
 
-    recButton.href = URL.createObjectURL(blob);
-    recButton.download = "video.mp4";
+    // recButton.href = URL.createObjectURL(blob);
+    // recButton.download = "video.mp4";
+
     console.log("recording stopped stopRecording function ");
     recorder.stop();
     recorder.onstop = handleStop;
 
-    let url = chrome.runtime.getURL("preview.html");
+    // let url = chrome.runtime.getURL("preview.html");
 
     // console.log(chrome.tabs, "Chrome tabs are available");
 
     // // location.href = await url
-     console.log(url,"current location url")
+    //  console.log(url,"current location url")
     // //  await chrome.tabs.update({url:url});
     //  window.open(url, "_self")
+
+    // window.location.href = "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html";
+
+
+
   }
 
   function setupVideoFeedback() {
