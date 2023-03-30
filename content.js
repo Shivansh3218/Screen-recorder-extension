@@ -467,11 +467,10 @@ window.addEventListener("load", () => {
     //   url: "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html",
     // });
 
-    (async () => {
-      const response = await chrome.runtime.sendMessage({greeting: "hello"});
-      console.log(response,"response of message to background.js");
-    })();
-
+    // (async () => {
+    //   const response = await chrome.runtime.sendMessage({greeting: "hello"});
+    //   console.log(response,"response of message to background.js");
+    // })();
 
     // const openTab = (url, newTab = true) => {
     //   let tabType = newTab ? "_blank" : "_self";
@@ -482,6 +481,13 @@ window.addEventListener("load", () => {
     // let video = document.createElement("video");
     // document.body.appendChild(video);
     // document.body.innerText = "iashdoasbundoasndojlsankdolashin";
+
+    // chrome.runtime.sendMessage("Hello from content.js to backGround.js!");
+
+    chrome.runtime.sendMessage({ action: 'createTab', url: 'chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html' });
+
+    // console.log("windoooooooooooooooooooooooooooooooooooooooooow is loadded");
+
   }
 
   function setupVideoFeedback() {

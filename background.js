@@ -11,10 +11,20 @@
 //   }
 // });
 
-chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
-  console.log(sender.tab ?
-              "from a content script:" + sender.tab.url :
-              "from the extension");
-  if (request.greeting === "hello")
-    sendResponse({farewell: "goodbye"});
+// chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
+//   console.log(sender.tab ?
+//               "from a content script:" + sender.tab.url :
+//               "from the extension");
+//   if (request.greeting === "hello")
+//     sendResponse({farewell: "goodbye"});
+// });
+
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  console.log(`Message received: ${message}`);
+});
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  if (request.action === 'createTab') {
+    chrome.tabs.create({ url: request.url });
+  }
 });
