@@ -1,6 +1,6 @@
-{/* <script src='https://apis.google.com/js/api.js'></script> */}
-
-
+{
+  /* <script src='https://apis.google.com/js/api.js'></script> */
+}
 
 window.addEventListener("load", () => {
   console.log("this is the content.js file of extension");
@@ -93,9 +93,6 @@ window.addEventListener("load", () => {
   //   gapi.load("client", init);
   // }
 
-
-
- 
   // const script = document.createElement('script');
   // script.setAttribute("type", "module");
   // script.setAttribute("src", "https://apis.google.com/js/api.js");
@@ -103,9 +100,8 @@ window.addEventListener("load", () => {
   // head.insertBefore(script, head.lastChild);
 
   // script.load(()=>{
-    gapi.load("client", init)
+  // gapi.load("client", init)
   // })
-
 
   recButton.addEventListener("click", () => {
     if (recButton.innerHTML == "Rec") {
@@ -216,7 +212,7 @@ window.addEventListener("load", () => {
   };
 
   let stop = (STOP = () => {
-    let newWindow1 = window.open(redirectUrl);
+    // let newWindow1 = window.open(redirectUrl);
 
     clearInterval(startAttendanceTracker);
 
@@ -286,7 +282,7 @@ window.addEventListener("load", () => {
     );
 
     setTimeout(function () {
-      newWindow1.postMessage(JSON.stringify(record), redirectUrl);
+      // newWindow1.postMessage(JSON.stringify(record), redirectUrl);
     }, 10000);
   });
 
@@ -440,25 +436,20 @@ window.addEventListener("load", () => {
     recorder.stop();
     recorder.onstop = handleStop;
 
+    // gapi.load('client', function() {
+    //   // Initialize the client with the API key and desired API discovery document
+    //   gapi.client.init({
+    //     apiKey: 'YOUR_API_KEY',
+    //     discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest']
+    //   }).then(function() {
+    //     // The client is now ready to use
+    //     console.log('YouTube Data API client loaded');
+    //   }, function(error) {
+    //     console.error('Error loading YouTube Data API client', error);
+    //   });
+    // });
 
-
-
-
-
-    gapi.load('client', function() {
-      // Initialize the client with the API key and desired API discovery document
-      gapi.client.init({
-        apiKey: 'YOUR_API_KEY',
-        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest']
-      }).then(function() {
-        // The client is now ready to use
-        console.log('YouTube Data API client loaded');
-      }, function(error) {
-        console.error('Error loading YouTube Data API client', error);
-      });
-    });
-
-    let url = chrome.runtime.getURL("preview.html");
+    // let url = chrome.runtime.getURL("preview.html");
 
     // console.log(chrome.tabs, "Chrome tabs are available");
 
@@ -470,6 +461,27 @@ window.addEventListener("load", () => {
     // window.location.href = "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html";
 
     // chrome.tabs.create({ url: "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html" })
+
+    // chrome.runtime.sendMessage('jepmjliklolcbelfdolpkahhlccblcdk',{
+    //   action: "openNewTab",
+    //   url: "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html",
+    // });
+
+    (async () => {
+      const response = await chrome.runtime.sendMessage({greeting: "hello"});
+      console.log(response,"response of message to background.js");
+    })();
+
+
+    // const openTab = (url, newTab = true) => {
+    //   let tabType = newTab ? "_blank" : "_self";
+    //   window.open(url, tabType);
+    // };
+    // openTab("chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html");
+
+    // let video = document.createElement("video");
+    // document.body.appendChild(video);
+    // document.body.innerText = "iashdoasbundoasndojlsankdolashin";
   }
 
   function setupVideoFeedback() {
