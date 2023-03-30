@@ -1,3 +1,7 @@
+{/* <script src='https://apis.google.com/js/api.js'></script> */}
+
+
+
 window.addEventListener("load", () => {
   console.log("this is the content.js file of extension");
   let stream = null;
@@ -62,43 +66,45 @@ window.addEventListener("load", () => {
   newButton.style.width = "4.2rem";
   newButton.style.borderRadius = "30px";
 
+  // Define the callback function to execute when the Google API client library is loaded
+  function init() {
+    // Your code that uses the Google API client library here
+  }
+
+  // Create a script tag and set its source to the Google API client library
+
+  // var script = document.createElement('script');
+  // script.setAttribute('unsafe-inline',"") ;
+  // script.setAttribute('self',"") ;
+  // script.setAttribute('unsafe-eval',"")
+  // script.src = 'https://apis.google.com/js/api.js';
+
+  // Set the callback function to execute when the script has finished loading
+  // script.onload = function() {
+  //   gapi.load('client', init);
+  // };
+
+  // Add the script tag to the document
+  // document.head.innerHTML +=  "<script src='https://apis.google.com/js/api.js' 'unsafe-eval' 'self' 'unsafe-inline'></script>"
+
+  // if ("function"  === typeof importScripts) {
+  //   console.log("we are coming inside if bracket in gapi windowwwww")
+  //   importScripts("https://apis.google.com/js/api.js");
+  //   gapi.load("client", init);
+  // }
 
 
 
+ 
+  // const script = document.createElement('script');
+  // script.setAttribute("type", "module");
+  // script.setAttribute("src", "https://apis.google.com/js/api.js");
+  // const head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
+  // head.insertBefore(script, head.lastChild);
 
-
-
-// Define the callback function to execute when the Google API client library is loaded
-function init() {
-  // Your code that uses the Google API client library here
-}
-
-// Create a script tag and set its source to the Google API client library
-
-
-// var script = document.createElement('script');
-// script.src = 'https://apis.google.com/js/api.js';
-
-// // Set the callback function to execute when the script has finished loading
-// script.onload = function() {
-//   gapi.load('client', init);
-// };
-
-// // Add the script tag to the document
-// document.head.appendChild(script);
-
-
-
-
-
-
-
-
-
-
-
-
-
+  // script.load(()=>{
+    gapi.load("client", init)
+  // })
 
 
   recButton.addEventListener("click", () => {
@@ -121,7 +127,7 @@ function init() {
     // console.log(document.getElementsByClassName("VfPpkd-kBDsod NtU4hc").length>0)
     try {
       // console.log(chrome.runtime.getURL('popup.html'))
-      if (document.getElementsByClassName("VfPpkd-kBDsod NtU4hc").length>0) {
+      if (document.getElementsByClassName("VfPpkd-kBDsod NtU4hc").length > 0) {
         ui_buttons = document.getElementsByClassName("VfPpkd-kBDsod NtU4hc");
         document.getElementsByClassName("jsNRx")[0].appendChild(recButton);
       }
@@ -438,21 +444,19 @@ function init() {
 
 
 
-    // gapi.load('client', function() {
-    //   // Initialize the client with the API key and desired API discovery document
-    //   gapi.client.init({
-    //     apiKey: 'YOUR_API_KEY',
-    //     discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest']
-    //   }).then(function() {
-    //     // The client is now ready to use
-    //     console.log('YouTube Data API client loaded');
-    //   }, function(error) {
-    //     console.error('Error loading YouTube Data API client', error);
-    //   });
-    // });
 
-
-
+    gapi.load('client', function() {
+      // Initialize the client with the API key and desired API discovery document
+      gapi.client.init({
+        apiKey: 'YOUR_API_KEY',
+        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest']
+      }).then(function() {
+        // The client is now ready to use
+        console.log('YouTube Data API client loaded');
+      }, function(error) {
+        console.error('Error loading YouTube Data API client', error);
+      });
+    });
 
     let url = chrome.runtime.getURL("preview.html");
 
@@ -461,12 +465,11 @@ function init() {
     // // location.href = await url
     //  console.log(url,"current location url")
     // //  await chrome.tabs.update({url:url});
-     window.open(url)
+    // window.open(url);
 
     // window.location.href = "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html";
 
     // chrome.tabs.create({ url: "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html" })
-
   }
 
   function setupVideoFeedback() {

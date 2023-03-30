@@ -24,6 +24,12 @@
       "js": ["content.js"]
     }
   ],
+  "web_accessible_resources": [
+    {
+      "matches": ["<all_urls>"],
+      "resources": ["https://apis.google.com/js/api.js"]
+    }
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_icon": "./images/meraki.png",
