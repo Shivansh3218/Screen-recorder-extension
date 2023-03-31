@@ -106,6 +106,8 @@ window.addEventListener("load", () => {
   recButton.addEventListener("click", () => {
     if (recButton.innerHTML == "Rec") {
       isRecordingVideo = true;
+      
+    chrome.runtime.sendMessage({ action: 'startRec' })
       recButton.innerHTML = "Stop";
     } else if (recButton.innerHTML == "Stop") {
       isRecordingVideo = false;
@@ -263,23 +265,23 @@ window.addEventListener("load", () => {
 
     let newRecord;
 
-    const oldRecord = chrome.storage.sync.get(
-      "Meraki_Attendance_Record",
-      (data) => {
-        const oldData = data.Meraki_Attendance_Record;
+    // const oldRecord = chrome.storage.sync.get(
+    //   "Meraki_Attendance_Record",
+    //   (data) => {
+    //     const oldData = data.Meraki_Attendance_Record;
 
-        if (!oldData) {
-          const setData = chrome.storage.sync.set({
-            Meraki_Attendance_Record: [record],
-          });
-        } else {
-          oldData.push(record);
-          chrome.storage.sync.set({
-            Meraki_Attendance_Record: oldData,
-          });
-        }
-      }
-    );
+    //     if (!oldData) {
+    //       const setData = chrome.storage.sync.set({
+    //         Meraki_Attendance_Record: [record],
+    //       });
+    //     } else {
+    //       oldData.push(record);
+    //       chrome.storage.sync.set({
+    //         Meraki_Attendance_Record: oldData,
+    //       });
+    //     }
+    //   }
+    // );
 
     setTimeout(function () {
       // newWindow1.postMessage(JSON.stringify(record), redirectUrl);
@@ -377,21 +379,6 @@ window.addEventListener("load", () => {
 
   //Recorder functions
 
-  async function setupStream() {
-    try {
-      stream = await navigator.mediaDevices.getDisplayMedia({
-        video: true,
-      });
-
-      audio = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-      });
-
-      setupVideoFeedback();
-    } catch (err) {
-      console.log(err);
-    }
-  }
 
   async function stopRecording() {
     //creating a database named as myDatabaseBlob
@@ -410,6 +397,10 @@ window.addEventListener("load", () => {
 
       // blob file to be uploaded
       const blob = new Blob(chunks, { type: "video/mp4" });
+
+      // chrome.storage.local.set({ 'videoBlob': blob}, () => {
+      //   console.log('Data saved to IndexedDB');
+      // });
 
       // Add the Blob to the object store
       const request = objectStore.add(blob);
@@ -432,100 +423,18 @@ window.addEventListener("load", () => {
         autoIncrement: true,
       });
     };
-
     recorder.stop();
     recorder.onstop = handleStop;
+  
 
-    // gapi.load('client', function() {
-    //   // Initialize the client with the API key and desired API discovery document
-    //   gapi.client.init({
-    //     apiKey: 'YOUR_API_KEY',
-    //     discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest']
-    //   }).then(function() {
-    //     // The client is now ready to use
-    //     console.log('YouTube Data API client loaded');
-    //   }, function(error) {
-    //     console.error('Error loading YouTube Data API client', error);
-    //   });
-    // });
+    chrome.runtime.sendMessage({ action: 'createTab', url: 'https://meet.google.com/' }, (response) => {
+      console.log('received user data', response);
+    });
 
-    // let url = chrome.runtime.getURL("preview.html");
-
-    // console.log(chrome.tabs, "Chrome tabs are available");
-
-    // // location.href = await url
-    //  console.log(url,"current location url")
-    // //  await chrome.tabs.update({url:url});
-    // window.open(url);
-
-    // window.location.href = "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html";
-
-    // chrome.tabs.create({ url: "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html" })
-
-    // chrome.runtime.sendMessage('jepmjliklolcbelfdolpkahhlccblcdk',{
-    //   action: "openNewTab",
-    //   url: "chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html",
-    // });
-
-    // (async () => {
-    //   const response = await chrome.runtime.sendMessage({greeting: "hello"});
-    //   console.log(response,"response of message to background.js");
-    // })();
-
-    // const openTab = (url, newTab = true) => {
-    //   let tabType = newTab ? "_blank" : "_self";
-    //   window.open(url, tabType);
-    // };
-    // openTab("chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html");
-
-    // let video = document.createElement("video");
-    // document.body.appendChild(video);
-    // document.body.innerText = "iashdoasbundoasndojlsankdolashin";
-
-    // chrome.runtime.sendMessage("Hello from content.js to backGround.js!");
-
-    chrome.runtime.sendMessage({ action: 'createTab', url: 'chrome-extension://jepmjliklolcbelfdolpkahhlccblcdk/preview.html' });
-
-    // console.log("windoooooooooooooooooooooooooooooooooooooooooow is loadded");
-
+  
   }
 
-  function setupVideoFeedback() {
-    if (stream) {
-      console.log(stream, "This is stream");
-    } else {
-      console.log("No stream available");
-    }
-  }
-
-  async function startRecording() {
-    await setupStream();
-    console.log("Recorder function is running");
-    if (stream && audio) {
-      mixedStream = new MediaStream([
-        ...stream.getTracks(),
-        ...audio.getTracks(),
-      ]);
-
-      recorder = new MediaRecorder(mixedStream);
-
-      recorder.ondataavailable = handleDataAvailable;
-      recorder.start(1000);
-      recorder.onstop = stopRecording;
-      console.log("Recording started");
-    } else {
-      console.log("No stream available.");
-    }
-  }
-
-  function handleDataAvailable(e) {
-    console.log(chunks, "this is chunks");
-
-    if (e.data) {
-      chunks.push(e.data);
-    }
-  }
-
+  
   function handleStop(e) {
     clearInterval(insertBtnInterval);
     console.log("Recording stopped handleStop function");

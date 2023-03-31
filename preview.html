@@ -5,8 +5,99 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Preview page of video</title>
+    <script src="gapi.js"></script>
+    <link rel="manifest" href="manifest.json">
+    <script src="client.js"></script>
+    
 </head>
 <body>
-    <h1>Heloooooooo Finaalyy redirected</h1>
+    <video src="" width="20rem" height="20rem" loop controls></video>
 </body>
+<script>
+
+// Create a new MediaRecorder instance and set the media type to 'video/mp4'
+const mediaRecorder = new MediaRecorder(blob, { mimeType: 'video/mp4' });
+
+// Create an array to hold the recorded data
+const recordedChunks = [];
+
+// Listen for the 'dataavailable' event and push the recorded data to the array
+mediaRecorder.addEventListener('dataavailable', e => {
+  if (e.data.size > 0) {
+    recordedChunks.push(e.data);
+  }
+});
+
+// Listen for the 'stop' event and create a new Blob with the recorded data
+mediaRecorder.addEventListener('stop', () => {
+  const recordedBlob = new Blob(recordedChunks, { type: 'video/mp4' });
+  
+  // Convert the Blob data to a URL using the URL.createObjectURL() method
+  const videoURL = URL.createObjectURL(recordedBlob);
+  
+  // Use the videoURL to play or upload the MP4 video
+  // ...
+});
+
+// Start recording
+mediaRecorder.start();
+
+// Stop recording after a certain duration or when done
+setTimeout(() => {
+  mediaRecorder.stop();
+}, durationInMillis);
+
+
+
+
+
+    // Load the Google API client library
+gapi.load('client', initClient);
+
+// Initialize the API client with the client ID and API key
+function initClient() {
+  gapi.client.init({
+    clientId: '34917283366-gda5ut9t8jrfmlp9s4a43epn8n8f6dfr.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAmDpcOimmewDKDrzbyM2o1pB8AkIY6zJ4',
+    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/youtube/v3/rest'],
+    scope: 'https://www.googleapis.com/auth/youtube.upload'
+  }).then(function() {
+    // Authorization successful
+    console.log('Authorization successful.');
+  }, function(err) {
+    // Authorization failed
+    console.error('Authorization failed:', err);
+  });
+}
+
+// Upload video to YouTube
+function uploadVideo(file) {
+  // Create a new YouTube video resource
+  var video = {
+    snippet: {
+      title: 'My video title',
+      description: 'My video description',
+      tags: ['tag1', 'tag2']
+    },
+    status: {
+      privacyStatus: 'private'
+    }
+  };
+
+  // Create the request to upload the video
+  var request = gapi.client.youtube.videos.insert({
+    part: 'snippet,status',
+    resource: video,
+    media: {
+      body: file
+    }
+  });
+
+  // Execute the request
+  request.execute(function(response) {
+    console.log('Video uploaded successfully:', response);
+  });
+}
+
+</script>
 </html>
