@@ -398,9 +398,9 @@ window.addEventListener("load", () => {
     recorder.stop();
     recorder.onstop = handleStop;
 
-    
+    const previewUrl = chrome.runtime.getURL("preview.html");
 
-    chrome.runtime.sendMessage({ action: 'createTab', url: 'chrome-extension://aiadkbgkhikiedcimjlodcbpnkdanjjk/preview.html' });
+    chrome.runtime.sendMessage({ action: 'createTab', url: previewUrl });
 
 
   }
