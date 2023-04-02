@@ -66,48 +66,10 @@ window.addEventListener("load", () => {
   newButton.style.width = "4.2rem";
   newButton.style.borderRadius = "30px";
 
-  // Define the callback function to execute when the Google API client library is loaded
-  function init() {
-    // Your code that uses the Google API client library here
-  }
-
-  // Create a script tag and set its source to the Google API client library
-
-  // var script = document.createElement('script');
-  // script.setAttribute('unsafe-inline',"") ;
-  // script.setAttribute('self',"") ;
-  // script.setAttribute('unsafe-eval',"")
-  // script.src = 'https://apis.google.com/js/api.js';
-
-  // Set the callback function to execute when the script has finished loading
-  // script.onload = function() {
-  //   gapi.load('client', init);
-  // };
-
-  // Add the script tag to the document
-  // document.head.innerHTML +=  "<script src='https://apis.google.com/js/api.js' 'unsafe-eval' 'self' 'unsafe-inline'></script>"
-
-  // if ("function"  === typeof importScripts) {
-  //   console.log("we are coming inside if bracket in gapi windowwwww")
-  //   importScripts("https://apis.google.com/js/api.js");
-  //   gapi.load("client", init);
-  // }
-
-  // const script = document.createElement('script');
-  // script.setAttribute("type", "module");
-  // script.setAttribute("src", "https://apis.google.com/js/api.js");
-  // const head = document.head || document.getElementsByTagName("head")[0] || document.documentElement;
-  // head.insertBefore(script, head.lastChild);
-
-  // script.load(()=>{
-  // gapi.load("client", init)
-  // })
-
+  
   recButton.addEventListener("click", () => {
     if (recButton.innerHTML == "Rec") {
       isRecordingVideo = true;
-      
-    chrome.runtime.sendMessage({ action: 'startRec' })
       recButton.innerHTML = "Stop";
     } else if (recButton.innerHTML == "Stop") {
       isRecordingVideo = false;
@@ -265,23 +227,23 @@ window.addEventListener("load", () => {
 
     let newRecord;
 
-    // const oldRecord = chrome.storage.sync.get(
-    //   "Meraki_Attendance_Record",
-    //   (data) => {
-    //     const oldData = data.Meraki_Attendance_Record;
+    const oldRecord = chrome.storage.sync.get(
+      "Meraki_Attendance_Record",
+      (data) => {
+        const oldData = data.Meraki_Attendance_Record;
 
-    //     if (!oldData) {
-    //       const setData = chrome.storage.sync.set({
-    //         Meraki_Attendance_Record: [record],
-    //       });
-    //     } else {
-    //       oldData.push(record);
-    //       chrome.storage.sync.set({
-    //         Meraki_Attendance_Record: oldData,
-    //       });
-    //     }
-    //   }
-    // );
+        if (!oldData) {
+          const setData = chrome.storage.sync.set({
+            Meraki_Attendance_Record: [record],
+          });
+        } else {
+          oldData.push(record);
+          chrome.storage.sync.set({
+            Meraki_Attendance_Record: oldData,
+          });
+        }
+      }
+    );
 
     setTimeout(function () {
       // newWindow1.postMessage(JSON.stringify(record), redirectUrl);
@@ -379,62 +341,106 @@ window.addEventListener("load", () => {
 
   //Recorder functions
 
+  async function setupStream() {
+    try {
+      stream = await navigator.mediaDevices.getDisplayMedia({
+        video: true,
+      });
+
+      audio = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+      });
+
+      setupVideoFeedback();
+    } catch (err) {
+      console.log(err);
+    }
+  }
 
   async function stopRecording() {
     //creating a database named as myDatabaseBlob
-    const dbPromise = window.indexedDB.open("myDatabaseBlob", 1);
-
-    dbPromise.onsuccess = (event) => {
-      console.log(
-        "Going inside the dbpromise function --------------------------"
-      );
-
-      const db = event.target.result;
-
-      // Create a transaction to access the object store
-      const transaction = db.transaction("myObjectStore", "readwrite");
-      const objectStore = transaction.objectStore("myObjectStore");
-
-      // blob file to be uploaded
+        // Create a transaction to access the object store
+     
+          // blob file to be uploaded
       const blob = new Blob(chunks, { type: "video/mp4" });
 
-      // chrome.storage.local.set({ 'videoBlob': blob}, () => {
-      //   console.log('Data saved to IndexedDB');
-      // });
-
-      // Add the Blob to the object store
-      const request = objectStore.add(blob);
-
-      request.onerror = (e) => {
-        console.error("Error adding Blob to object store:", e.target.error);
+      // Function to convert a single Blob to Base64
+      const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = () => {
+            const base64Strings = reader.result
+              .toString()
+              .replace(/^data:(.*,)?/, "");
+            resolve(base64Strings);
+          };
+          reader.onerror = (error) => reject(error);
+        });
       };
+  
+      // Use Promise.all() to convert the array of Blobs to an array of Base64 strings
+      blobToBase64(blob)
+        .then((base64Strings) => {
+          // base64Video = btoa(base64Strings);
+          console.log(base64Strings, "converting blob to base 64");
 
-      request.onsuccess = () => {
-        console.log("Blob added to object store:", request.result);
-      };
-    };
+          chrome.runtime.sendMessage({type: "base64Data",data: base64Strings});
 
-    dbPromise.onupgradeneeded = (e) => {
-      const db = e.target.result;
 
-      // Create a new object store in the database
-      const objectStore = db.createObjectStore("myObjectStore", {
-        keyPath: "id",
-        autoIncrement: true,
-      });
-    };
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+
+     
+
     recorder.stop();
     recorder.onstop = handleStop;
-  
 
-    chrome.runtime.sendMessage({ action: 'createTab', url: 'https://meet.google.com/' }, (response) => {
-      console.log('received user data', response);
-    });
+    
 
-  
+    chrome.runtime.sendMessage({ action: 'createTab', url: 'chrome-extension://aiadkbgkhikiedcimjlodcbpnkdanjjk/preview.html' });
+
+
   }
 
-  
+  function setupVideoFeedback() {
+    if (stream) {
+      console.log(stream, "This is stream");
+    } else {
+      console.log("No stream available");
+    }
+  }
+
+  async function startRecording() {
+    await setupStream();
+    console.log("Recorder function is running");
+    if (stream && audio) {
+      mixedStream = new MediaStream([
+        ...stream.getTracks(),
+        ...audio.getTracks(),
+      ]);
+
+      recorder = new MediaRecorder(mixedStream);
+
+      recorder.ondataavailable = handleDataAvailable;
+      recorder.start(1000);
+      recorder.onstop = stopRecording;
+      console.log("Recording started");
+    } else {
+      console.log("No stream available.");
+    }
+  }
+
+  function handleDataAvailable(e) {
+    console.log(chunks, "this is chunks");
+
+    if (e.data) {
+      chunks.push(e.data);
+    }
+  }
+
   function handleStop(e) {
     clearInterval(insertBtnInterval);
     console.log("Recording stopped handleStop function");

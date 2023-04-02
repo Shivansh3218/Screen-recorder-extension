@@ -1,68 +1,33 @@
+// console.log("background.js file is loaded")
+// loadGapi(function() {
+//     // Your code that uses the Google API client library here
+
+//   });
+
+// chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+//   if (message.action === 'openNewTab') {
+//     // Open a new tab with the specified URL
+//     chrome.tabs.create({ url: message.url });
+//   }
+// });
+
+// chrome.runtime.onMessage.addListener( function(request, sender, sendResponse) {
+//   console.log(sender.tab ?
+//               "from a content script:" + sender.tab.url :
+//               "from the extension");
+//   if (request.greeting === "hello")
+//     sendResponse({farewell: "goodbye"});
+// });
+
+let mydata = '';
+
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   console.log(`Message received: ${message}`);
 });
 
-
-async function setupStream() {
-  try {
-    stream = await navigator.mediaDevices.getDisplayMedia({
-      video: true,
-    });
-
-    audio = await navigator.mediaDevices.getUserMedia({
-      audio: true,
-    });
-
-    setupVideoFeedback();
-  } catch (err) {
-    console.log(err);
-  }
-}
-
-function setupVideoFeedback() {
-  if (stream) {
-    console.log(stream, "This is stream");
-  } else {
-    console.log("No stream available");
-  }
-}
-
-async function startRecording() {
-  await setupStream();
-  console.log("Recorder function is running");
-  if (stream && audio) {
-    mixedStream = new MediaStream([
-      ...stream.getTracks(),
-      ...audio.getTracks(),
-    ]);
-
-    recorder = new MediaRecorder(mixedStream);
-
-    recorder.ondataavailable = handleDataAvailable;
-    recorder.start(1000);
-    recorder.onstop = stopRecording;
-    console.log("Recording started");
-  } else {
-    console.log("No stream available.");
-  }
-}
-
-function handleDataAvailable(e) {
-  console.log(chunks, "this is chunks");
-
-  if (e.data) {
-    chunks.push(e.data);
-  }
-}
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "createTab") {
+  if (request.action === 'createTab') {
     chrome.tabs.create({ url: request.url });
-
-    sendResponse("message from background");
-  }
-
-  if(request.action == "startRec"){
-    startRecording()
   }
 });
+
