@@ -358,9 +358,7 @@ window.addEventListener("load", () => {
   }
 
   async function stopRecording() {
-    //creating a database named as myDatabaseBlob
-        // Create a transaction to access the object store
-     
+       
           // blob file to be uploaded
       const blob = new Blob(chunks, { type: "video/mp4" });
 
@@ -379,7 +377,6 @@ window.addEventListener("load", () => {
         });
       };
   
-      // Use Promise.all() to convert the array of Blobs to an array of Base64 strings
       blobToBase64(blob)
         .then((base64Strings) => {
           // base64Video = btoa(base64Strings);
@@ -392,8 +389,6 @@ window.addEventListener("load", () => {
         .catch((error) => {
           console.error(error);
         });
-
-     
 
     recorder.stop();
     recorder.onstop = handleStop;

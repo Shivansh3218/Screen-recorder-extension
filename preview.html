@@ -1,13 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Preview page of video</title>
-</head>
-<body>
+    <script type="text/javascript" src="oauth.js"></script>
+    <link rel="stylesheet" href="preview.css" />
+  </head>
+  <body>
     <!-- <video id="merakiMeetVideo" controls></video> -->
-</body>
-<script src="preview.js"></script>
+    <h1>Preview and Upload a video to Youtube</h1>
+    <div class="buttons">
+        <button class="btn" id="download-video">Download Video </button>
+        <!-- <input type="file" id="video-file" name="video-file" /><br /><br /> -->
+        <button class="btn" id="upload-video" >Upload video</button>
+    </div>
+    
+  </body>
+  <script src="preview.js"></script>
+  <!-- <script src="https://apis.google.com/js/api.js" onload="gapiLoad()"></script>
+  <script
+    src="https://accounts.google.com/gsi/client"
+    onload="gisInit()"
+  ></script> -->
 </html>
