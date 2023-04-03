@@ -53,6 +53,19 @@ window.addEventListener("load", () => {
   recButton.style.borderRadius = "50%";
   recButton.style.cursor = "pointer";
 
+  let pauseBtn = document.createElement("button");
+  pauseBtn.id = "pauseBtn";
+  // recButton.className = "Jyj1Td CkXZgc";
+  pauseBtn.type = "button";
+  pauseBtn.innerHTML = "pause";
+  pauseBtn.style.border = "none";
+  pauseBtn.style.backgroundColor = "blue";
+  pauseBtn.style.color = "white";
+  pauseBtn.style.height = "2.6rem";
+  pauseBtn.style.width = "3.5rem";
+  pauseBtn.style.borderRadius = "50%";
+  pauseBtn.style.cursor = "pointer";
+
   // Adding Recording button to meet ui
   let newButton = document.createElement("button");
   newButton.id = "newButton";
@@ -66,7 +79,6 @@ window.addEventListener("load", () => {
   newButton.style.width = "4.2rem";
   newButton.style.borderRadius = "30px";
 
-  
   recButton.addEventListener("click", () => {
     if (recButton.innerHTML == "Rec") {
       isRecordingVideo = true;
@@ -78,10 +90,13 @@ window.addEventListener("load", () => {
 
     if (isRecordingVideo) {
       startRecording();
+
+      document.getElementsByClassName("Tmb7Fd")[0].appendChild(pauseBtn);
     } else {
       stopRecording();
     }
   });
+  pauseBtn.addEventListener("click", () => handlePause());
 
   function insertRecButton() {
     // console.log(document.getElementsByClassName("VfPpkd-kBDsod NtU4hc").length>0)
@@ -357,47 +372,53 @@ window.addEventListener("load", () => {
     }
   }
 
+  function handlePause() {
+    if (recorder.state === "recording") {
+      recorder.pause();
+      console.log("recording is paused");
+      // recording paused
+    } else if (recorder.state === "paused") {
+      recorder.resume();
+      // resume recording
+    }
+  }
+
   async function stopRecording() {
-       
-          // blob file to be uploaded
-      const blob = new Blob(chunks, { type: "video/mp4" });
+    // blob file to be uploaded
+    const blob = new Blob(chunks, { type: "video/mp4" });
 
-      // Function to convert a single Blob to Base64
-      const blobToBase64 = (blob) => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(blob);
-          reader.onloadend = () => {
-            const base64Strings = reader.result
-              .toString()
-              .replace(/^data:(.*,)?/, "");
-            resolve(base64Strings);
-          };
-          reader.onerror = (error) => reject(error);
-        });
-      };
-  
-      blobToBase64(blob)
-        .then((base64Strings) => {
-          // base64Video = btoa(base64Strings);
-          console.log(base64Strings, "converting blob to base 64");
+    // Function to convert a single Blob to Base64
+    const blobToBase64 = (blob) => {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(blob);
+        reader.onloadend = () => {
+          const base64Strings = reader.result
+            .toString()
+            .replace(/^data:(.*,)?/, "");
+          resolve(base64Strings);
+        };
+        reader.onerror = (error) => reject(error);
+      });
+    };
 
-          chrome.runtime.sendMessage({type: "base64Data",data: base64Strings});
+    blobToBase64(blob)
+      .then((base64Strings) => {
+        // base64Video = btoa(base64Strings);
+        console.log(base64Strings, "converting blob to base 64");
 
-
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        chrome.runtime.sendMessage({ type: "base64Data", data: base64Strings });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
 
     recorder.stop();
     recorder.onstop = handleStop;
 
     const previewUrl = chrome.runtime.getURL("preview.html");
 
-    chrome.runtime.sendMessage({ action: 'createTab', url: previewUrl });
-
-
+    chrome.runtime.sendMessage({ action: "createTab", url: previewUrl });
   }
 
   function setupVideoFeedback() {

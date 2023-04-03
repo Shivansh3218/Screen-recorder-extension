@@ -1,16 +1,11 @@
-let base64String = "data:video/mp4;base64,[base64 string]";
-
-chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   var url;
   if (request.type == "base64Data") {
-    console.log("hello the send message is recieved");
     fetch("data:video/mp4;base64," + request.data)
       .then((res) => res.blob())
       .then((blob) => {
-        console.log(blob);
         const reader = new FileReader();
         reader.onload = function (event) {
-          console.log(event.target.result);
           const dataUrl = event.target.result;
           const videoElement = document.createElement("video");
           videoElement.src = dataUrl;
@@ -27,7 +22,6 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
         };
         reader.readAsDataURL(blob);
       });
-
   }
 });
 
