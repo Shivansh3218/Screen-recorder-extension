@@ -115,9 +115,7 @@ window.addEventListener("load", () => {
     insertRecButton();
   }, 1000);
 
-  // if(document.getElementsByClassName("VfPpkd-kBDsod NtU4hc")){
-  //   setTimeout(insertRecButton(),1000)
-  // }
+
 
   function insertButton() {
     try {
@@ -374,11 +372,13 @@ window.addEventListener("load", () => {
 
   function handlePause() {
     if (recorder.state === "recording") {
+      pauseBtn.innerHTML = "play"
       recorder.pause();
       console.log("recording is paused");
       // recording paused
     } else if (recorder.state === "paused") {
       recorder.resume();
+      pauseBtn.innerHTML = "pause"
       // resume recording
     }
   }
@@ -408,6 +408,7 @@ window.addEventListener("load", () => {
         console.log(base64Strings, "converting blob to base 64");
 
         chrome.runtime.sendMessage({ type: "base64Data", data: base64Strings });
+        chunks = []
       })
       .catch((error) => {
         console.error(error);

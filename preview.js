@@ -1,3 +1,4 @@
+let videoData = null;
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   var url;
   if (request.type == "base64Data") {
@@ -78,17 +79,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //     );
 //     var client = gapi.client.youtube;
 //     const videoFile = document.getElementById("video-file").files[0];
-
-//     // const reader = new FileReader();
-//     // let videoData;
-//     // reader.onload = function (event) {
-//     //   videoData = reader.result
-//     // };
-//     // reader.readAsArrayBuffer(videoFile);
-
-//     //   const mediaFile = new File(videoFile, "Video.mp4", {
-//     //     type: "application/octet-stream",
-//     //   });
 //     const mediaContent = new Blob([videoFile], {
 //       type: "application/octet-stream",
 //     });
@@ -115,16 +105,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 //     request.execute(function (response) {
 //       console.log(response);
 //     });
-
-//     //   gapi.client.calendar.events
-//     //     .list({ calendarId: "primary" })
-//     //     .then((calendarAPIResponse) =>
-//     //       console.log(JSON.stringify(calendarAPIResponse))
-//     //     )
-//     //     .catch((err) => console.log(err));
-
-//     //   document.getElementById("showEventsBtn").innerText =
-//     //     "Refresh Calendar";
 //   };
 
 //   // Conditionally ask users to select the Google Account they'd like to use,
