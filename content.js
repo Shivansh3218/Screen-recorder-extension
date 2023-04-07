@@ -23,6 +23,7 @@ window.addEventListener("load", () => {
   let startTime;
   let flag = true; // make if false to block non-meraki classes
   let meetingDuration;
+  var record;
   const redirectUrl = "http://192.168.101.4:5500/index.html";
   // let newWindow1 = window.open(redirectUrl);
 
@@ -115,8 +116,6 @@ window.addEventListener("load", () => {
     insertRecButton();
   }, 1000);
 
-
-
   function insertButton() {
     try {
       ui_buttons = document.getElementsByClassName("VfPpkd-kBDsod NtU4hc");
@@ -207,7 +206,7 @@ window.addEventListener("load", () => {
     }
     const end_time = new Date();
 
-    var record = {
+    record = {
       attendee_names: JSON.stringify(sortedtstudentsNameSet),
       attendedDurationInSec: JSON.stringify(studentsAttendedDuration),
       meet_code: meetingCode,
@@ -372,13 +371,13 @@ window.addEventListener("load", () => {
 
   function handlePause() {
     if (recorder.state === "recording") {
-      pauseBtn.innerHTML = "play"
+      pauseBtn.innerHTML = "play";
       recorder.pause();
       console.log("recording is paused");
       // recording paused
     } else if (recorder.state === "paused") {
       recorder.resume();
-      pauseBtn.innerHTML = "pause"
+      pauseBtn.innerHTML = "pause";
       // resume recording
     }
   }
@@ -386,6 +385,7 @@ window.addEventListener("load", () => {
   async function stopRecording() {
     // blob file to be uploaded
     const blob = new Blob(chunks, { type: "video/mp4" });
+    stop();
 
     // Function to convert a single Blob to Base64
     const blobToBase64 = (blob) => {
@@ -407,8 +407,8 @@ window.addEventListener("load", () => {
         // base64Video = btoa(base64Strings);
         console.log(base64Strings, "converting blob to base 64");
 
-        chrome.runtime.sendMessage({ type: "base64Data", data: base64Strings });
-        chunks = []
+        chrome.runtime.sendMessage({ type: "base64Data", data: base64Strings, meetRecords:record });
+        chunks = [];
       })
       .catch((error) => {
         console.error(error);
@@ -452,7 +452,6 @@ window.addEventListener("load", () => {
 
   function handleDataAvailable(e) {
     console.log(chunks, "this is chunks");
-
     if (e.data) {
       chunks.push(e.data);
     }
