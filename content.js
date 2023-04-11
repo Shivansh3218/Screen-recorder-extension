@@ -1,7 +1,3 @@
-{
-  /* <script src='https://apis.google.com/js/api.js'></script> */
-}
-
 window.addEventListener("load", () => {
   console.log("this is the content.js file of extension");
   let stream = null;
@@ -239,23 +235,7 @@ window.addEventListener("load", () => {
 
     let newRecord;
 
-    const oldRecord = chrome.storage.sync.get(
-      "Meraki_Attendance_Record",
-      (data) => {
-        const oldData = data.Meraki_Attendance_Record;
 
-        if (!oldData) {
-          const setData = chrome.storage.sync.set({
-            Meraki_Attendance_Record: [record],
-          });
-        } else {
-          oldData.push(record);
-          chrome.storage.sync.set({
-            Meraki_Attendance_Record: oldData,
-          });
-        }
-      }
-    );
 
     setTimeout(function () {
       // newWindow1.postMessage(JSON.stringify(record), redirectUrl);
@@ -383,43 +363,15 @@ window.addEventListener("load", () => {
   }
 
   async function stopRecording() {
-    // blob file to be uploaded
-    const blob = new Blob(chunks, { type: "video/mp4" });
     stop();
-
-    // Function to convert a single Blob to Base64
-    const blobToBase64 = (blob) => {
-      return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
-        reader.onloadend = () => {
-          const base64Strings = reader.result
-            .toString()
-            .replace(/^data:(.*,)?/, "");
-          resolve(base64Strings);
-        };
-        reader.onerror = (error) => reject(error);
-      });
-    };
-
-    blobToBase64(blob)
-      .then((base64Strings) => {
-        // base64Video = btoa(base64Strings);
-        console.log(base64Strings, "converting blob to base 64");
-
-        chrome.runtime.sendMessage({ type: "base64Data", data: base64Strings, meetRecords:record });
-        chunks = [];
-      })
-      .catch((error) => {
-        console.error(error);
-      });
-
     recorder.stop();
     recorder.onstop = handleStop;
 
     const previewUrl = chrome.runtime.getURL("preview.html");
 
     chrome.runtime.sendMessage({ action: "createTab", url: previewUrl });
+    
+    chrome.runtime.sendMessage({ type: "attendance", meetRecord:record });
   }
 
   function setupVideoFeedback() {
@@ -454,6 +406,30 @@ window.addEventListener("load", () => {
     console.log(chunks, "this is chunks");
     if (e.data) {
       chunks.push(e.data);
+      const blobToBase64 = (blob) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = () => {
+            const base64Strings = reader.result
+              .toString()
+              .replace(/^data:(.*,)?/, "");
+            resolve(base64Strings);
+          };
+          reader.onerror = (error) => reject(error);
+        });
+      };
+
+      blobToBase64(e.data)
+        .then((base64Strings) => {
+          chrome.runtime.sendMessage({
+            type: "base64Data",
+            data: base64Strings,
+          });
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     }
   }
 
